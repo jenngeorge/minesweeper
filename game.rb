@@ -2,6 +2,9 @@ require_relative 'board'
 require 'byebug'
 
 class Game
+
+  attr_reader :board
+
   def initialize
     @board = Board.new
   end
@@ -31,7 +34,7 @@ class Game
   end
 
   def flag(pos)
-    @board.flag_tile(pos)
+    @board.flag_tile(*pos)
     puts "You have placed #{flag_count} flags."
   end
 
@@ -41,6 +44,4 @@ class Game
 
   def step
   end
-
-
 end

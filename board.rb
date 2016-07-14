@@ -4,7 +4,7 @@ require "colorize"
 
 class Board
 
-  attr_reader :grid
+  attr_reader :grid, :flags
 
   def initialize(size=8, bomb_count=12)
     @size = size
@@ -24,6 +24,7 @@ class Board
         @bomb_count -= 1
       end
     end
+    nil
   end
 
   def render_board(game_over=false)
@@ -46,10 +47,11 @@ class Board
         else
           print "   ".colorize(:background => :light_blue)
         end
-        
+
       end
       print "\n"
     end
+    nil
   end
 
 
@@ -59,6 +61,7 @@ class Board
         tile.fringe_value = find_near_bombs(row_index, tile_index)
       end
     end
+    nil
   end
 
   def find_near_bombs(*pos)
@@ -94,17 +97,20 @@ class Board
     true
   end
 
-  def hit_bomb?(*pos)
-    self[pos].bomb
+  def hit_bomb?(pos)
+    x, y = pos
+    self[x, y].bomb
   end
 
   def flag_tile(*pos)
-    if self[pos].flag
-      self[pos].flag = false
-      @flag -= 1
+    x, y = pos
+    byebug
+    if self[x, y].flag
+      self[x, y].flag = false
+      @flags -= 1
     else
-      self[pos].flag = true
-      @flag += 1
+      self[x, y].flag = true
+      @flags += 1
     end
   end
 

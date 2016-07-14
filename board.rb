@@ -26,24 +26,32 @@ class Board
     end
   end
 
-  def render_board
+  def render_board(game_over=false)
     grid.each do | row |
       row.each do | tile |
-        if tile.hidden
-          if game_over? && tile.bomb
-            print " ! ".colorize(:color => :black, :background => :red)
-          else
-            print "   ".colorize(:background => :light_blue)
-          end
-        elsif tile.fringe_value == 0
-          print "   ".colorize(:background => :white)
-        else
+
+        #show all the bombs at end
+        if game_over && tile.bomb
+          print " ! ".colorize(:color => :black, :background => :red)
+        #not hidden, has fringe value
+        elsif !tile.hidden && tile.fringe_value != 0
           print " #{tile.fringe_value} ".colorize(:color => :black, :background => :white)
+        #hidden, flag
+        elsif tile.hidden && tile.flag
+          print " f ".colorize(:color => :black, :background => :light_blue)
+        #not hidden, no fringes
+        elsif !tile.hidden
+          print "   ".colorize(:background => :white)
+        #hidden
+        else
+          print "   ".colorize(:background => :light_blue)
         end
+        
       end
       print "\n"
     end
   end
+
 
   def set_fringes
     @grid.each_with_index do | row, row_index |

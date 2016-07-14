@@ -1,6 +1,6 @@
 class Tile
 
-  attr_accessor :fringe_value, :hidden, :bomb
+  attr_accessor :fringe_value, :hidden, :bomb, :flag
 
   def initialize
     @hidden = true

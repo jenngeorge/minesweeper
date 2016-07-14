@@ -15,6 +15,7 @@ class Game
 
   def lost?
     @board.hit_bomb?
+    render_board(true)
   end
 
   def won?

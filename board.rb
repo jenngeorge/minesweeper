@@ -33,7 +33,7 @@ class Board
         elsif tile.fringe_value == 0
           print "   ".colorize(:background => :white)
         else
-          print " #{tile.fringe_value} ".colorize(:background => :white)
+          print " #{tile.fringe_value} ".colorize(:color => :black, :background => :white)
         end
       end
       print "\n"

@@ -6,6 +6,14 @@ class Tile
     @hidden = true
     @bomb = false
     @fringe_value = 0
+    @flag = false
   end
 
+  def reveal
+    @hidden = false
+  end
+
+  def flag_space
+    @flag = true
+  end
 end

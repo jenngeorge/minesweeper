@@ -10,6 +10,7 @@ class Board
     @size = size
     @bomb_count = bomb_count
     @grid = Array.new(size) {Array.new(size) {Tile.new}}
+    @flags = 0
     set_bombs
     set_fringes
   end
@@ -29,7 +30,11 @@ class Board
     grid.each do | row |
       row.each do | tile |
         if tile.hidden
-          print "   ".colorize(:background => :light_blue)
+          if game_over? && tile.bomb
+            print " ! ".colorize(:color => :black, :background => :red)
+          else
+            print "   ".colorize(:background => :light_blue)
+          end
         elsif tile.fringe_value == 0
           print "   ".colorize(:background => :white)
         else
@@ -71,6 +76,28 @@ class Board
   def [](*pos)
     x, y = pos
     @grid[x][y]
+  end
+
+  def solved?
+    flat_grid = @grid.flatten
+    flat_grid.each do | tile |
+      return false if tile.bomb != tile.flag
+    end
+    true
+  end
+
+  def hit_bomb?(*pos)
+    self[pos].bomb
+  end
+
+  def flag_tile(*pos)
+    if self[pos].flag
+      self[pos].flag = false
+      @flag -= 1
+    else
+      self[pos].flag = true
+      @flag += 1
+    end
   end
 
 end

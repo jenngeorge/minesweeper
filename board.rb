@@ -30,7 +30,6 @@ class Board
   def render_board(game_over=false)
     grid.each do | row |
       row.each do | tile |
-
         #show all the bombs at end
         if game_over && tile.bomb
           print " ! ".colorize(:color => :black, :background => :red)
@@ -70,18 +69,18 @@ class Board
     bombs = 0
     (-1..1).each do |add_x|
       (-1..1).each do |add_y|
+        x, y = pos
         x, y = x + add_x, y+add_y
         next if add_x == 0 && add_y == 0
-        next if !valid_pos?(x, y)
+        next if !valid_pos?([x, y])
         bombs +=1 if self[x, y].bomb
       end
     end
     bombs
   end
 
-  def valid_pos?(*pos)
-    x, y = pos
-    x.between?(0, @size-1) && y.between?(0, @size-1)
+  def valid_pos?(pos)
+    pos[0].between?(0, @size-1) && pos[1].between?(0, @size-1)
   end
 
   def [](*pos)
@@ -97,14 +96,13 @@ class Board
     true
   end
 
-  def hit_bomb?(pos)
-    x, y = pos
-    self[x, y].bomb
+  def hit_bomb?
+    flat_grid = @grid.flatten
+    flat_grid.any? { | tile | !tile.hidden && tile.bomb }
   end
 
   def flag_tile(*pos)
     x, y = pos
-    byebug
     if self[x, y].flag
       self[x, y].flag = false
       @flags -= 1
@@ -114,8 +112,41 @@ class Board
     end
   end
 
+  def step_tile(*pos)
+
+    x, y = pos
+    self[x, y].reveal
+    return if self[x,y].bomb
+    (-1..1).each do |add_x|
+      (-1..1).each do |add_y|
+        x, y = pos
+        x, y = x + add_x, y + add_y
+        next if add_x == 0 && add_y == 0
+        unhide_until_fringe(x, y)
+      end
+    end
+  end
 end
 
+def unhide_until_fringe(*pos)
+  x, y = pos
+  return nil unless valid_pos?([x, y])
+  return nil unless self[x,y].hidden
 
-board = Board.new()
-board.render_board
+  self[x, y].reveal unless self[x,y].bomb
+
+  return nil if find_near_bombs(x, y) > 0
+
+  (-1..1).each do |add_x|
+    (-1..1).each do |add_y|
+      x, y = pos
+      x, y = x + add_x, y + add_y
+      next if add_x == 0 && add_y == 0
+
+      unhide_until_fringe(x, y)
+    end
+  end
+end
+
+# board = Board.new()
+#board.render_board
